@@ -29,6 +29,9 @@ public class FrontController extends HttpServlet {
 
     private void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
+        // Кажемо браузеру відображати сторінку в UTF-8
+        response.setCharacterEncoding("UTF-8");
 
         // Отримуємо чистий URL, на який клацнув користувач
         String path = request.getRequestURI();

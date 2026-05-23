@@ -7,34 +7,47 @@ import java.sql.Statement;
 
 public class JdbcDaoFactory extends DaoFactory {
 
-    private static final String DB_URL = "jdbc:h2:mem:librarydb;DB_CLOSE_DELAY=-1";
+    // Змінюємо mem на шлях до домашньої папки (~/). База створить файл
+    // librarydb.mv.db
+    private static final String DB_URL = "jdbc:h2:~/librarydb;AUTO_SERVER=TRUE";
     private static final String DB_USER = "sa";
     private static final String DB_PASSWORD = "";
 
+    private static Connection keepAliveConnection;
+
     public JdbcDaoFactory() {
+        try {
+            Class.forName("org.h2.Driver");
 
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-                Statement stmt = conn.createStatement()) {
+            if (keepAliveConnection == null || keepAliveConnection.isClosed()) {
+                keepAliveConnection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+            }
 
-            stmt.execute("CREATE TABLE IF NOT EXISTS readers (" +
-                    "id INT AUTO_INCREMENT PRIMARY KEY, " +
-                    "full_name VARCHAR(255) NOT NULL)");
+            try (Statement stmt = keepAliveConnection.createStatement()) {
+                // Створюємо таблиці (вони створяться лише один раз при першому запуску)
+                stmt.execute("CREATE TABLE IF NOT EXISTS readers (" +
+                        "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                        "full_name VARCHAR(255) NOT NULL)");
 
-            stmt.execute("CREATE TABLE IF NOT EXISTS books (" +
-                    "id INT AUTO_INCREMENT PRIMARY KEY, " +
-                    "title VARCHAR(255) NOT NULL, " +
-                    "author VARCHAR(255) NOT NULL, " +
-                    "description VARCHAR(255), " +
-                    "reader_id INT, " +
-                    "FOREIGN KEY (reader_id) REFERENCES readers(id) ON DELETE SET NULL)");
+                stmt.execute("CREATE TABLE IF NOT EXISTS books (" +
+                        "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                        "title VARCHAR(255) NOT NULL, " +
+                        "author VARCHAR(255) NOT NULL, " +
+                        "description VARCHAR(255), " +
+                        "reader_id INT, " +
+                        "FOREIGN KEY (reader_id) REFERENCES readers(id) ON DELETE SET NULL)");
 
-            stmt.execute(
-                    "INSERT INTO readers (full_name) SELECT 'Вероніка Нєма' WHERE NOT EXISTS (SELECT 1 FROM readers WHERE id = 1)");
-            stmt.execute(
-                    "INSERT INTO readers (full_name) SELECT 'Олександр Іванов' WHERE NOT EXISTS (SELECT 1 FROM readers WHERE id = 2)");
-            stmt.execute(
-                    "INSERT INTO readers (full_name) SELECT 'Марія Петренко' WHERE NOT EXISTS (SELECT 1 FROM readers WHERE id = 3)");
-
+                // 🛑 ВАЖЛИВО: Оскільки база тепер постійна, ми маємо перевіряти,
+                // чи таблиця readers взагалі порожня, перед тим як додавати початкових
+                // користувачів.
+                // Інакше щоразу при запуску сервера у тебе дублюватимуться ті самі читачі!
+                var rs = stmt.executeQuery("SELECT COUNT(*) FROM readers");
+                if (rs.next() && rs.getInt(1) == 0) {
+                    stmt.execute("INSERT INTO readers (full_name) VALUES ('Вероніка Нєма')");
+                    stmt.execute("INSERT INTO readers (full_name) VALUES ('Олександр Іванов')");
+                    stmt.execute("INSERT INTO readers (full_name) VALUES ('Марія Петренко')");
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -43,6 +56,7 @@ public class JdbcDaoFactory extends DaoFactory {
     @Override
     public DaoConnection getConnection() {
         try {
+            Class.forName("org.h2.Driver");
             Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
             return new JdbcDaoConnection(connection);
         } catch (Exception e) {

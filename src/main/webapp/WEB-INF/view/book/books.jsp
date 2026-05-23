@@ -9,9 +9,25 @@
         th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
         th { background-color: #4CAF50; color: white; }
         tr:nth-child(even) { background-color: #f2f2f2; }
-        .btn { padding: 8px 12px; text-decoration: none; color: white; border-radius: 4px; font-size: 14px; }
+        .btn {
+            display: inline-block;       /* 🌟 Рятує від злипання та наповзання! */
+            padding: 6px 12px;           /* Зменшуємо внутрішні відступи, щоб кнопки стали меншими */
+            font-size: 13px;             /* Робимо шрифт акуратнішим */
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 4px;
+            color: white;
+            text-align: center;
+            vertical-align: middle;
+            margin: 2px;                 /* Додаємо невеликий відступ між кнопками з усіх боків */
+            cursor: pointer;
+        }
+        .btn-edit {
+            background-color: #3498db;
+        }
+
         .btn-add { background-color: #4CAF50; margin-bottom: 20px; display: inline-block; }
-        .btn-delete { background-color: #f44336; }
+        
     </style>
 </head>
 <body>
@@ -49,10 +65,13 @@
                         </c:choose>
                     </td>
                     <td>
-                        <a href="${pageContext.request.contextPath}/books/delete?id=${book.id}" 
-                           class="btn btn-delete" 
-                           onclick="return confirm('Ви впевнені, що хочете видалити цю книгу?')">Видалити</a>
-                    </td>
+                    <a href="${pageContext.request.contextPath}/books/addBook?id=${book.id}" 
+                    class="btn btn-edit" style="background-color: #3498db; margin-right: 5px;">Редагувати</a>
+
+                    <a href="${pageContext.request.contextPath}/books/delete?id=${book.id}" 
+                    class="btn" 
+                    onclick="return confirm('Ви впевнені, що хочете видалити цю книгу?')">🗑</a>
+                </td>
                 </tr>
             </c:forEach>
             <c:if var="isEmpty" test="${empty books}">

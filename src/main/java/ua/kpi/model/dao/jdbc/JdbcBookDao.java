@@ -35,7 +35,8 @@ public class JdbcBookDao extends AbstractJdbcDao<Book> implements BookDao {
 
     @Override
     protected String getUpdateQuery() {
-        return "UPDATE books SET title = ?, author = ?, description = ?, reader_id = ?" + WHERE_ID;
+        // Пишемо чистий WHERE id = ? без жодних літер "b."
+        return "UPDATE books SET title = ?, author = ?, description = ?, reader_id = ? WHERE id = ?";
     }
 
     @Override

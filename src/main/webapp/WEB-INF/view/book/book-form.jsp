@@ -2,37 +2,46 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
-    <title>Додати книгу</title>
+    <title>${not empty book.id ? 'Редагувати книгу' : 'Додати книгу'}</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f9f9f9; }
-        .form-container { background: white; padding: 30px; border-radius: 8px; max-width: 500px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9f9f9; color: #333; padding: 40px; }
+        .form-container { max-width: 500px; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin: 0 auto; }
+        h2 { color: #2c3e50; margin-bottom: 20px; font-size: 24px; }
         .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input[type="text"], textarea, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        .btn-submit { background-color: #4CAF50; color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; font-size: 16px; }
-        .btn-cancel { background-color: #9e9e9e; color: white; padding: 12px 20px; border-radius: 4px; text-decoration: none; margin-left: 10px; font-size: 16px; display: inline-block; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: #444; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; box-sizing: border-box; }
+        .error-box { background-color: #fde8e8; color: #e74c3c; border: 1px solid #f8b4b4; padding: 12px; border-radius: 6px; margin-bottom: 20px; font-weight: bold; }
+        .btn-submit { background-color: #5cb85c; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; font-weight: bold; }
+        .btn-submit:hover { background-color: #4cae4c; }
+        .btn-cancel { color: #7f8c8d; text-decoration: none; margin-left: 15px; font-size: 15px; }
+        .btn-cancel:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
 
     <div class="form-container">
-        <h2>Додати нову книгу до системи</h2>
+        <h2>${not empty book.id ? '📝 Редагувати книгу' : '📚 Додати нову книгу'}</h2>
+        
+        <c:if test="${not empty errorMessage}">
+            <div class="error-box">${errorMessage}</div>
+        </c:if>
         
         <form action="${pageContext.request.contextPath}/books/addBook" method="POST">
+            <input type="hidden" name="id" value="${book.id}">
             
             <div class="form-group">
                 <label for="title">Назва книги:</label>
-                <input type="text" id="title" name="title" required placeholder="Наприклад, Гіперіон">
+                <input type="text" id="title" name="title" value="<c:out value='${book.title}'/>">
             </div>
 
             <div class="form-group">
                 <label for="author">Автор:</label>
-                <input type="text" id="author" name="author" required placeholder="Ден Сіммонс">
+                <input type="text" id="author" name="author" value="<c:out value='${book.author}'/>">
             </div>
 
             <div class="form-group">
                 <label for="description">Короткий опис:</label>
-                <textarea id="description" name="description" rows="4" placeholder="Опис сюжету..."></textarea>
+                <textarea id="description" name="description" rows="4"><c:out value='${book.description}'/></textarea>
             </div>
 
             <div class="form-group">
@@ -40,13 +49,15 @@
                 <select id="readerId" name="readerId">
                     <option value="">-- Залишити вільну книгу --</option>
                     <c:forEach var="reader" items="${readers}">
-                        <option value="${reader.id}">${reader.fullName}</option>
+                        <option value="${reader.id}" ${book.reader.id == reader.id ? 'selected' : ''}>
+                            ${reader.fullName}
+                        </option>
                     </c:forEach>
                 </select>
             </div>
 
-            <button type="submit" class="btn-submit">Зберегти книгу</button>
-            <a href="${pageContext.request.contextPath}/books" class="btn btn-cancel">Скасувати</a>
+            <button type="submit" class="btn-submit">Зберегти</button>
+            <a href="${pageContext.request.contextPath}/books" class="btn-cancel">Скасувати</a>
         </form>
     </div>
 

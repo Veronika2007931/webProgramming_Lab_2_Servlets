@@ -21,16 +21,39 @@ public class AddBookCommand implements Command {
     public String execute(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        // Передаємо список читачів, бо він потрібен і для нової книги, і для
+        // редагування
+        request.setAttribute(AttributesHolder.READERS, readerService.getAll());
+
+        // ЛОГІКА GET: Відкриваємо форму (для створення або для редагування)
         if (request.getMethod().equals("GET")) {
-            request.setAttribute(AttributesHolder.READERS, readerService.getAll());
+            String idParam = request.getParameter("id");
+            if (idParam != null && !idParam.isEmpty()) {
+                // Якщо передано id, значить ми РЕДАГУЄМО існуючу книгу
+                Book bookToEdit = bookService.getById(Integer.parseInt(idParam)).orElse(null);
+                request.setAttribute("book", bookToEdit);
+            }
             return PagesHolder.BOOK;
         }
 
-        // Логіка для POST (Збереження)
+        // ЛОГІКА POST: Збереження (нове або оновлення)
+        String idParam = request.getParameter("id");
         String title = request.getParameter(AttributesHolder.TITLE);
         String author = request.getParameter(AttributesHolder.AUTHOR);
         String description = request.getParameter(AttributesHolder.DESCRIPTION);
         String readerIdParam = request.getParameter(AttributesHolder.READER_ID);
+
+        // 🛑 ВАЛІДАЦІЯ: Перевіряємо на порожні поля
+        if (title == null || title.trim().isEmpty() || author == null || author.trim().isEmpty()) {
+            request.setAttribute("errorMessage",
+                    "Помилка валідації! Назва книги та Автор є обов'язковими для заповнення.");
+
+            // Зберігаємо введені дані, щоб користувачу не довелося писати все заново
+            Book textBook = new Book.Builder().setTitle(title).setAuthor(author).setDescription(description).build();
+            request.setAttribute("book", textBook);
+
+            return PagesHolder.BOOK; // Повертаємо на форму з помилкою
+        }
 
         Reader reader = null;
         if (readerIdParam != null && !readerIdParam.isEmpty()) {
@@ -39,16 +62,20 @@ public class AddBookCommand implements Command {
                     .build();
         }
 
-        Book book = new Book.Builder()
-                .setTitle(title)
-                .setAuthor(author)
+        Book.Builder bookBuilder = new Book.Builder()
+                .setTitle(title.trim())
+                .setAuthor(author.trim())
                 .setDescription(description)
-                .setReader(reader)
-                .build();
+                .setReader(reader);
 
-        bookService.create(book);
+        // Якщо ми редагуємо, зберігаємо старий ID книги
+        if (idParam != null && !idParam.isEmpty()) {
+            bookBuilder.setId(Integer.parseInt(idParam));
+            bookService.update(bookBuilder.build()); // Викличе оновлення (зараз перевіримо сервіс)
+        } else {
+            bookService.create(bookBuilder.build()); // Створення нової
+        }
 
-        // Перенаправляємо назад на список книг (Редирект, як у Северина)
         return "redirect:" + PathsHolder.BOOKS;
     }
 }
