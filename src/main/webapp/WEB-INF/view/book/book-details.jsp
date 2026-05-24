@@ -44,7 +44,7 @@
                 <c:choose>
                     <c:when test="${not empty book.reader}">
                         <p><strong>Повне ім'я:</strong> ${book.reader.fullName}</p>
-                        <p><strong>Формуляр читача (ID):</strong> #000${book.reader.id}</p>
+                        <p><strong>Айді читача (ID):</strong> #000${book.reader.id}</p>
                         <p style="color: #2980b9; font-size: 13px;">* Книга знаходиться на руках у цього користувача.</p>
                     </c:when>
                     <c:otherwise>

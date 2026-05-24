@@ -20,6 +20,6 @@ public class BookDetailsCommand implements Command {
             Book book = bookService.getById(Integer.parseInt(idParam)).orElse(null);
             request.setAttribute("book", book);
         }
-        return PagesHolder.BOOK_DETAILS; // або через твій PagesHolder
+        return PagesHolder.BOOK_DETAILS;
     }
 }
