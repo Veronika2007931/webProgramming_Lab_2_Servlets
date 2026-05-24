@@ -6,4 +6,5 @@ public class PathsHolder {
     public static final String ADD_BOOK = BOOKS + "/addBook";
     public static final String EDIT_BOOK = BOOKS + "/editBook";
     public static final String DELETE_BOOK = BOOKS + "/delete";
+    public static final String BOOKS_DETAILS = BOOKS + "/details";
 }

@@ -6,6 +6,7 @@ ua/kpi/model/service/BookService$Holder.class
 ua/kpi/controller/command/Command.class
 ua/kpi/model/dao/GenericDao.class
 ua/kpi/utils/PathsHolder.class
+ua/kpi/controller/command/BookDetailsCommand.class
 ua/kpi/model/service/ReaderService$Holder.class
 ua/kpi/model/entity/Book$Builder.class
 ua/kpi/model/dao/exception/DaoException.class

@@ -1,4 +1,5 @@
 /Users/veronikanema/Documents/GitHub/webProgramming_Lab_2_Servlets/src/main/java/ua/kpi/controller/command/AddBookCommand.java
+/Users/veronikanema/Documents/GitHub/webProgramming_Lab_2_Servlets/src/main/java/ua/kpi/controller/command/BookDetailsCommand.java
 /Users/veronikanema/Documents/GitHub/webProgramming_Lab_2_Servlets/src/main/java/ua/kpi/controller/command/Command.java
 /Users/veronikanema/Documents/GitHub/webProgramming_Lab_2_Servlets/src/main/java/ua/kpi/controller/command/CommandHolder.java
 /Users/veronikanema/Documents/GitHub/webProgramming_Lab_2_Servlets/src/main/java/ua/kpi/controller/command/DeleteBookCommand.java

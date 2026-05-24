@@ -34,6 +34,8 @@ public class JdbcDaoFactory extends DaoFactory {
                         "title VARCHAR(255) NOT NULL, " +
                         "author VARCHAR(255) NOT NULL, " +
                         "description VARCHAR(255), " +
+                        "genre VARCHAR(100), " + // Нове поле
+                        "publishing_year INT, " +
                         "reader_id INT, " +
                         "FOREIGN KEY (reader_id) REFERENCES readers(id) ON DELETE SET NULL)");
 

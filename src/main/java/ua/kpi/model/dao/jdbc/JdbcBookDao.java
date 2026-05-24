@@ -8,14 +8,16 @@ import java.util.List;
 
 public class JdbcBookDao extends AbstractJdbcDao<Book> implements BookDao {
     private static final String DELETE_BOOK_BY_ID = "DELETE FROM books WHERE id = ?";
-    private static final String INSERT_INTO_BOOK = "INSERT INTO books (title, author, description, reader_id) VALUES (?, ?, ?, ?)";
-    private static final String SELECT_FROM_BOOK = "SELECT b.*, r.full_name FROM books b LEFT JOIN readers r ON b.reader_id = r.id";
+    private static final String INSERT_INTO_BOOK = "INSERT INTO books (title, author, description, genre, publishing_year, reader_id) VALUES (?, ?, ?, ?, ?, ?)";
+    private static final String SELECT_FROM_BOOK = "SELECT b.id, b.title, b.author, b.description, b.genre, b.publishing_year, b.reader_id, r.full_name FROM books b LEFT JOIN readers r ON b.reader_id = r.id";
     private static final String WHERE_ID = " WHERE b.id = ?";
 
     private static final String ID = "id";
     private static final String TITLE = "title";
     private static final String AUTHOR = "author";
     private static final String DESCRIPTION = "description";
+    private static final String GENRE = "genre";
+    private static final String PUBLISHING_YEAR = "publishing_year";
     private static final String READER_ID = "reader_id";
     private static final String READER_NAME = "full_name";
 
@@ -35,8 +37,7 @@ public class JdbcBookDao extends AbstractJdbcDao<Book> implements BookDao {
 
     @Override
     protected String getUpdateQuery() {
-        // Пишемо чистий WHERE id = ? без жодних літер "b."
-        return "UPDATE books SET title = ?, author = ?, description = ?, reader_id = ? WHERE id = ?";
+        return "UPDATE books SET title = ?, author = ?, description = ?, genre = ?, publishing_year = ?, reader_id = ? WHERE id = ?";
     }
 
     @Override
@@ -65,6 +66,8 @@ public class JdbcBookDao extends AbstractJdbcDao<Book> implements BookDao {
                 .setTitle(resultSet.getString(TITLE))
                 .setAuthor(resultSet.getString(AUTHOR))
                 .setDescription(resultSet.getString(DESCRIPTION))
+                .setGenre(resultSet.getString(GENRE)) // Читаємо з БД
+                .setPublishingYear(resultSet.getInt(PUBLISHING_YEAR))
                 .setReader(reader)
                 .build();
     }
@@ -79,10 +82,16 @@ public class JdbcBookDao extends AbstractJdbcDao<Book> implements BookDao {
         query.setString(1, entity.getTitle());
         query.setString(2, entity.getAuthor());
         query.setString(3, entity.getDescription());
-        if (entity.getReader() != null && entity.getReader().getId() != null) {
-            query.setInt(4, entity.getReader().getId());
+        query.setString(4, entity.getGenre());
+        if (entity.getPublishingYear() != null) {
+            query.setInt(5, entity.getPublishingYear());
         } else {
-            query.setNull(4, Types.INTEGER);
+            query.setNull(5, Types.INTEGER);
+        }
+        if (entity.getReader() != null && entity.getReader().getId() != null) {
+            query.setInt(6, entity.getReader().getId());
+        } else {
+            query.setNull(6, Types.INTEGER);
         }
     }
 
@@ -91,16 +100,29 @@ public class JdbcBookDao extends AbstractJdbcDao<Book> implements BookDao {
         query.setString(1, entity.getTitle());
         query.setString(2, entity.getAuthor());
         query.setString(3, entity.getDescription());
-        if (entity.getReader() != null && entity.getReader().getId() != null) {
-            query.setInt(4, entity.getReader().getId());
+        query.setString(4, entity.getGenre()); // 4-й параметр
+
+        // 5-й параметр: Рік видання (з урахуванням можливого null)
+        if (entity.getPublishingYear() != null && entity.getPublishingYear() != 0) {
+            query.setInt(5, entity.getPublishingYear());
         } else {
-            query.setNull(4, Types.INTEGER);
+            query.setNull(5, Types.INTEGER);
         }
-        query.setInt(5, entity.getId());
+
+        // 6-й параметр: ID читача (з урахуванням можливого null)
+        if (entity.getReader() != null && entity.getReader().getId() != null) {
+            query.setInt(6, entity.getReader().getId());
+        } else {
+            query.setNull(6, Types.INTEGER);
+        }
+
+        // 7-й параметр: ID книги для умови "WHERE id = ?"
+        query.setInt(7, entity.getId());
+
     }
 
     @Override
     public List<Book> findByTitle(String title) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Method findByTitle is not implemented yet.");
     }
 }

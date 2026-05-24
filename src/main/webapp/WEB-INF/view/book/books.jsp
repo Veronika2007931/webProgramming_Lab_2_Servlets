@@ -10,24 +10,28 @@
         th { background-color: #4CAF50; color: white; }
         tr:nth-child(even) { background-color: #f2f2f2; }
         .btn {
-            display: inline-block;       /* 🌟 Рятує від злипання та наповзання! */
-            padding: 6px 12px;           /* Зменшуємо внутрішні відступи, щоб кнопки стали меншими */
-            font-size: 13px;             /* Робимо шрифт акуратнішим */
+            display: inline-block;       
+            padding: 6px 12px;           
+            font-size: 13px;             
             font-weight: 600;
             text-decoration: none;
             border-radius: 4px;
             color: white;
             text-align: center;
             vertical-align: middle;
-            margin: 2px;                 /* Додаємо невеликий відступ між кнопками з усіх боків */
+            margin: 2px;                 
             cursor: pointer;
         }
         .btn-edit {
             background-color: #3498db;
         }
-
+        .btn-delete {
+            background-color: #e74c3c; /* Гарний червоний колір для кошика */
+        }
+        .btn-details {
+            background-color: #34495e; /* Акуратний темний колір для кнопки Деталі */
+        }
         .btn-add { background-color: #4CAF50; margin-bottom: 20px; display: inline-block; }
-        
     </style>
 </head>
 <body>
@@ -51,30 +55,44 @@
             <c:forEach var="book" items="${books}">
                 <tr>
                     <td>${book.id}</td>
-                    <td><strong>${book.title}</strong></td>
-                    <td>${book.author}</td>
-                    <td>${book.description}</td>
+                    
+                    <td>
+                        <a href="${pageContext.request.contextPath}/books/details?id=${book.id}" style="font-weight: bold; color: #2c3e50; text-decoration: none;">
+                            <c:out value="${book.title}"/>
+                        </a>
+                    </td>
+                    
+                    <td><c:out value="${book.author}"/></td>
+                    
+                    <td>
+                        <c:out value="${not empty book.description ? book.description : 'Немає опису'}"/>
+                    </td>
+                    
                     <td>
                         <c:choose>
                             <c:when test="${not empty book.reader}">
-                                <span style="color: #2196F3;">👤 ${book.reader.fullName}</span>
+                                <span style="color: #2196F3; font-weight: bold;">👤 <c:out value="${book.reader.fullName}"/></span>
                             </c:when>
                             <c:otherwise>
                                 <span style="color: #9e9e9e; font-style: italic;">Вільна</span>
                             </c:otherwise>
                         </c:choose>
                     </td>
+                    
                     <td>
-                    <a href="${pageContext.request.contextPath}/books/addBook?id=${book.id}" 
-                    class="btn btn-edit" style="background-color: #3498db; margin-right: 5px;">Редагувати</a>
+                        <a href="${pageContext.request.contextPath}/books/details?id=${book.id}" 
+                           class="btn btn-details">Деталі</a>
 
-                    <a href="${pageContext.request.contextPath}/books/delete?id=${book.id}" 
-                    class="btn" 
-                    onclick="return confirm('Ви впевнені, що хочете видалити цю книгу?')">🗑</a>
-                </td>
+                        <a href="${pageContext.request.contextPath}/books/addBook?id=${book.id}" 
+                           class="btn btn-edit">Редагувати</a>
+
+                        <a href="${pageContext.request.contextPath}/books/delete?id=${book.id}" 
+                           class="btn btn-delete" 
+                           onclick="return confirm('Ви впевнені, що хочете видалити цю книгу?')">🗑</a>
+                    </td>
                 </tr>
             </c:forEach>
-            <c:if var="isEmpty" test="${empty books}">
+            <c:if test="${empty books}">
                 <tr>
                     <td colspan="6" style="text-align: center; color: #999;">У бібліотеці поки немає жодної книги.</td>
                 </tr>

@@ -45,6 +45,19 @@
             </div>
 
             <div class="form-group">
+                <label for="genre">Жанр:</label>
+                <input type="text" id="genre" name="genre" value="<c:out value='${book.genre}'/>" placeholder="Наприклад, Романтика, Фентезі">
+            </div>
+
+            <div class="form-group">
+                <label for="publishingYear">Рік видання:</label>
+                <input type="number" id="publishingYear" name="publishingYear" 
+                    min="1" max="<%= java.time.Year.now().getValue() %>"
+                    value="<c:out value='${book.publishingYear != 0 ? book.publishingYear : \"\"}'/>" 
+                    placeholder="Наприклад, 2023">
+            </div>
+
+            <div class="form-group">
                 <label for="readerId">Прив'язати до читача:</label>
                 <select id="readerId" name="readerId">
                     <option value="">-- Залишити вільну книгу --</option>

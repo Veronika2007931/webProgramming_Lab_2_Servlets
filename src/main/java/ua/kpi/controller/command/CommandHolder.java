@@ -12,6 +12,7 @@ public class CommandHolder {
         commands.put(PathsHolder.BOOKS, new GetBooksCommand());
         commands.put(PathsHolder.ADD_BOOK, new AddBookCommand());
         commands.put(PathsHolder.DELETE_BOOK, new DeleteBookCommand());
+        commands.put(PathsHolder.BOOKS_DETAILS, new BookDetailsCommand());
     }
 
     public static Command getCommand(String path) {

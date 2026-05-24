@@ -7,7 +7,11 @@ public class Book {
     private String title;
     private String author;
     private String description;
-    private Reader reader; // Прямий зв'язок між об'єктами без Spring анотацій
+    private Reader reader;
+    private String genre;
+    private Integer publishingYear;
+
+    // --- СТАНДАРТНІ ГЕТТЕРИ ТА СЕТТЕРИ ---
 
     public Integer getId() {
         return id;
@@ -41,6 +45,24 @@ public class Book {
         this.description = description;
     }
 
+    public String getGenre() {
+        return genre;
+    }
+
+    // Чистий класичний сеттер для самого класу Book
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
+    public Integer getPublishingYear() {
+        return publishingYear;
+    }
+
+    // Чистий класичний сеттер для самого класу Book
+    public void setPublishingYear(Integer publishingYear) {
+        this.publishingYear = publishingYear;
+    }
+
     public Reader getReader() {
         return reader;
     }
@@ -48,6 +70,8 @@ public class Book {
     public void setReader(Reader reader) {
         this.reader = reader;
     }
+
+    // --- ОНОВЛЕНІ СИСТЕМНІ МЕТОДИ (ВРАХОВУЮТЬ ЖАНР І РІК) ---
 
     @Override
     public boolean equals(Object o) {
@@ -60,21 +84,30 @@ public class Book {
                 Objects.equals(title, book.title) &&
                 Objects.equals(author, book.author) &&
                 Objects.equals(description, book.description) &&
+                Objects.equals(genre, book.genre) &&
+                Objects.equals(publishingYear, book.publishingYear) &&
                 Objects.equals(reader, book.reader);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, author, description, reader);
+        return Objects.hash(id, title, author, description, genre, publishingYear, reader);
     }
 
     @Override
     public String toString() {
-        return "Book{" + "id=" + id + ", title='" + title + '\'' + ", author='" + author + '\'' + ", description='"
-                + description + '\'' + ", reader=" + reader + '}';
+        return "Book{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", author='" + author + '\'' +
+                ", description='" + description + '\'' +
+                ", genre='" + genre + '\'' +
+                ", publishingYear=" + publishingYear +
+                ", reader=" + reader +
+                '}';
     }
 
-    // Builder для Книги
+    // --- ПРАВИЛЬНИЙ BUILDER ДЛЯ КНИГИ ---
     public static class Builder {
         private final Book instance = new Book();
 
@@ -95,6 +128,16 @@ public class Book {
 
         public Builder setDescription(String description) {
             instance.description = description;
+            return this;
+        }
+
+        public Builder setGenre(String genre) {
+            instance.genre = genre;
+            return this;
+        }
+
+        public Builder setPublishingYear(Integer publishingYear) {
+            instance.publishingYear = publishingYear;
             return this;
         }
 

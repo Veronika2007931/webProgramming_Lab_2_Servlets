@@ -41,18 +41,47 @@ public class AddBookCommand implements Command {
         String title = request.getParameter(AttributesHolder.TITLE);
         String author = request.getParameter(AttributesHolder.AUTHOR);
         String description = request.getParameter(AttributesHolder.DESCRIPTION);
+        String genre = request.getParameter("genre");
+        String publishingYearParam = request.getParameter("publishingYear"); // Змінили ім'я для ясності
         String readerIdParam = request.getParameter(AttributesHolder.READER_ID);
 
+        // 🌟 БЕЗПЕЧНО ПАРСИМО РІК ВИДАННЯ ЗІ STRING В INTEGER
+        Integer py = null;
+        if (publishingYearParam != null && !publishingYearParam.trim().isEmpty()) {
+            try {
+                py = Integer.parseInt(publishingYearParam.trim());
+            } catch (NumberFormatException e) {
+                // Якщо користувач ввів не число, залишаємо null або можна обробити помилку
+            }
+        }
+
         // 🛑 ВАЛІДАЦІЯ: Перевіряємо на порожні поля
+        int currentYear = java.time.Year.now().getValue(); // Отримуємо поточний рік (2026)
+
         if (title == null || title.trim().isEmpty() || author == null || author.trim().isEmpty()) {
             request.setAttribute("errorMessage",
                     "Помилка валідації! Назва книги та Автор є обов'язковими для заповнення.");
 
-            // Зберігаємо введені дані, щоб користувачу не довелося писати все заново
-            Book textBook = new Book.Builder().setTitle(title).setAuthor(author).setDescription(description).build();
+            Book textBook = new Book.Builder().setTitle(title).setAuthor(author).setDescription(description)
+                    .setGenre(genre).setPublishingYear(py).build();
             request.setAttribute("book", textBook);
+            return PagesHolder.BOOK;
+        }
+        // 🌟 Нова перевірка: якщо рік введено, але він некоректний
+        else if (py != null && (py < 1 || py > currentYear)) {
+            request.setAttribute("errorMessage",
+                    "Помилка валідації! Рік видання повинен бути в межах від 1 до " + currentYear + ".");
 
-            return PagesHolder.BOOK; // Повертаємо на форму з помилкою
+            // Повертаємо введені дані назад на форму, щоб не стерлися
+            Book textBook = new Book.Builder()
+                    .setTitle(title)
+                    .setAuthor(author)
+                    .setDescription(description)
+                    .setGenre(genre)
+                    .setPublishingYear(py)
+                    .build();
+            request.setAttribute("book", textBook);
+            return PagesHolder.BOOK;
         }
 
         Reader reader = null;
@@ -62,16 +91,19 @@ public class AddBookCommand implements Command {
                     .build();
         }
 
+        // Збираємо фінальну книгу для бази даних
         Book.Builder bookBuilder = new Book.Builder()
                 .setTitle(title.trim())
                 .setAuthor(author.trim())
                 .setDescription(description)
+                .setGenre(genre)
+                .setPublishingYear(py) // 🌟 Тепер тут передається правильний Integer py
                 .setReader(reader);
 
         // Якщо ми редагуємо, зберігаємо старий ID книги
         if (idParam != null && !idParam.isEmpty()) {
             bookBuilder.setId(Integer.parseInt(idParam));
-            bookService.update(bookBuilder.build()); // Викличе оновлення (зараз перевіримо сервіс)
+            bookService.update(bookBuilder.build());
         } else {
             bookService.create(bookBuilder.build()); // Створення нової
         }
