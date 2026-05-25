@@ -1,6 +1,5 @@
 package ua.kpi.model.dao.jdbc;
 
-
 import ua.kpi.model.dao.DaoConnection;
 import ua.kpi.model.dao.exception.DaoException;
 import java.sql.*;
@@ -19,7 +18,7 @@ public class JdbcDaoConnection implements DaoConnection {
             connection.setAutoCommit(false);
             inTransaction = true;
         } catch (SQLException e) {
-            throw new RuntimeException(e); // Тимчасово через RuntimeException, поки не створили свій
+            throw new RuntimeException(e);
         }
     }
 

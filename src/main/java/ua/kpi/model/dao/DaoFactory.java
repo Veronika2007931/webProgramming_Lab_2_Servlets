@@ -13,8 +13,6 @@ public abstract class DaoFactory {
 
     public static DaoFactory getInstance() {
         if (instance == null) {
-            // Спрощуємо виклик фабрики напряму для лаби, щоб не мучитися з файлами
-            // конфігурацій .properties
             instance = new JdbcDaoFactory();
         }
         return instance;

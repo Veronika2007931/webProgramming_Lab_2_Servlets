@@ -66,7 +66,7 @@ public class JdbcBookDao extends AbstractJdbcDao<Book> implements BookDao {
                 .setTitle(resultSet.getString(TITLE))
                 .setAuthor(resultSet.getString(AUTHOR))
                 .setDescription(resultSet.getString(DESCRIPTION))
-                .setGenre(resultSet.getString(GENRE)) // Читаємо з БД
+                .setGenre(resultSet.getString(GENRE))
                 .setPublishingYear(resultSet.getInt(PUBLISHING_YEAR))
                 .setReader(reader)
                 .build();
@@ -100,23 +100,20 @@ public class JdbcBookDao extends AbstractJdbcDao<Book> implements BookDao {
         query.setString(1, entity.getTitle());
         query.setString(2, entity.getAuthor());
         query.setString(3, entity.getDescription());
-        query.setString(4, entity.getGenre()); // 4-й параметр
+        query.setString(4, entity.getGenre());
 
-        // 5-й параметр: Рік видання (з урахуванням можливого null)
         if (entity.getPublishingYear() != null && entity.getPublishingYear() != 0) {
             query.setInt(5, entity.getPublishingYear());
         } else {
             query.setNull(5, Types.INTEGER);
         }
 
-        // 6-й параметр: ID читача (з урахуванням можливого null)
         if (entity.getReader() != null && entity.getReader().getId() != null) {
             query.setInt(6, entity.getReader().getId());
         } else {
             query.setNull(6, Types.INTEGER);
         }
 
-        // 7-й параметр: ID книги для умови "WHERE id = ?"
         query.setInt(7, entity.getId());
 
     }

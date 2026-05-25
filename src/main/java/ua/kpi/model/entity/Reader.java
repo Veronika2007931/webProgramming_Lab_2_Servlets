@@ -42,7 +42,6 @@ public class Reader {
         return "Reader{" + "id=" + id + ", fullName='" + fullName + '\'' + '}';
     }
 
-    // Той самий патерн Builder, який є у викладача
     public static class Builder {
         private final Reader instance = new Reader();
 

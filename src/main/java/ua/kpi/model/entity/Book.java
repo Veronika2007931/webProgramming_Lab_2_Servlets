@@ -11,8 +11,6 @@ public class Book {
     private String genre;
     private Integer publishingYear;
 
-    // --- СТАНДАРТНІ ГЕТТЕРИ ТА СЕТТЕРИ ---
-
     public Integer getId() {
         return id;
     }
@@ -49,7 +47,6 @@ public class Book {
         return genre;
     }
 
-    // Чистий класичний сеттер для самого класу Book
     public void setGenre(String genre) {
         this.genre = genre;
     }
@@ -58,7 +55,6 @@ public class Book {
         return publishingYear;
     }
 
-    // Чистий класичний сеттер для самого класу Book
     public void setPublishingYear(Integer publishingYear) {
         this.publishingYear = publishingYear;
     }
@@ -70,8 +66,6 @@ public class Book {
     public void setReader(Reader reader) {
         this.reader = reader;
     }
-
-    // --- ОНОВЛЕНІ СИСТЕМНІ МЕТОДИ (ВРАХОВУЮТЬ ЖАНР І РІК) ---
 
     @Override
     public boolean equals(Object o) {

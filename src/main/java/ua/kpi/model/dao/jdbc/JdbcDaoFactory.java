@@ -7,8 +7,6 @@ import java.sql.Statement;
 
 public class JdbcDaoFactory extends DaoFactory {
 
-    // Змінюємо mem на шлях до домашньої папки (~/). База створить файл
-    // librarydb.mv.db
     private static final String DB_URL = "jdbc:h2:~/librarydb;AUTO_SERVER=TRUE";
     private static final String DB_USER = "sa";
     private static final String DB_PASSWORD = "";
@@ -24,7 +22,7 @@ public class JdbcDaoFactory extends DaoFactory {
             }
 
             try (Statement stmt = keepAliveConnection.createStatement()) {
-                // Створюємо таблиці (вони створяться лише один раз при першому запуску)
+
                 stmt.execute("CREATE TABLE IF NOT EXISTS readers (" +
                         "id INT AUTO_INCREMENT PRIMARY KEY, " +
                         "full_name VARCHAR(255) NOT NULL)");
@@ -34,15 +32,11 @@ public class JdbcDaoFactory extends DaoFactory {
                         "title VARCHAR(255) NOT NULL, " +
                         "author VARCHAR(255) NOT NULL, " +
                         "description VARCHAR(255), " +
-                        "genre VARCHAR(100), " + // Нове поле
+                        "genre VARCHAR(100), " +
                         "publishing_year INT, " +
                         "reader_id INT, " +
                         "FOREIGN KEY (reader_id) REFERENCES readers(id) ON DELETE SET NULL)");
 
-                // 🛑 ВАЖЛИВО: Оскільки база тепер постійна, ми маємо перевіряти,
-                // чи таблиця readers взагалі порожня, перед тим як додавати початкових
-                // користувачів.
-                // Інакше щоразу при запуску сервера у тебе дублюватимуться ті самі читачі!
                 var rs = stmt.executeQuery("SELECT COUNT(*) FROM readers");
                 if (rs.next() && rs.getInt(1) == 0) {
                     stmt.execute("INSERT INTO readers (full_name) VALUES ('Вероніка Нєма')");
