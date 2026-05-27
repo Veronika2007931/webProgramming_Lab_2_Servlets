@@ -36,7 +36,7 @@
 </head>
 <body>
 
-    <h2>📚 Моя Бібліотека</h2>
+    <h2> Моя Бібліотека</h2>
     
     <a href="${pageContext.request.contextPath}/books/addBook" class="btn btn-add">+ Додати нову книгу</a>
 

@@ -22,7 +22,7 @@
 
     <div class="details-card">
         <div class="card-header">
-            <h2>📖 ${book.title}</h2>
+            <h2> ${book.title}</h2>
             <p>Автор: ${book.author}</p>
         </div>
         <div class="card-body">
@@ -40,11 +40,11 @@
             </div>
 
             <div class="reader-box">
-                <h3>👤 Інформація про читача:</h3>
+                <h3> Інформація про читача:</h3>
                 <c:choose>
                     <c:when test="${not empty book.reader}">
                         <p><strong>Повне ім'я:</strong> ${book.reader.fullName}</p>
-                        <p><strong>Формуляр читача (ID):</strong> #000${book.reader.id}</p>
+                        <p><strong>Айді читача (ID):</strong> #000${book.reader.id}</p>
                         <p style="color: #2980b9; font-size: 13px;">* Книга знаходиться на руках у цього користувача.</p>
                     </c:when>
                     <c:otherwise>

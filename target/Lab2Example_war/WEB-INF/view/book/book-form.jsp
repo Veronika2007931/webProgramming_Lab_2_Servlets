@@ -20,7 +20,7 @@
 <body>
 
     <div class="form-container">
-        <h2>${not empty book.id ? '📝 Редагувати книгу' : '📚 Додати нову книгу'}</h2>
+        <h2>${not empty book.id ? 'Редагувати книгу' : 'Додати нову книгу'}</h2>
         
         <c:if test="${not empty errorMessage}">
             <div class="error-box">${errorMessage}</div>
